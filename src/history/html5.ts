@@ -194,7 +194,8 @@ function useHistoryStateNavigation(base: string, token: number) {
     value: getHistoryState(token),
   }
   // build current history entry as this is a fresh navigation
-  if (!historyState.value) {
+  // when url is not match base should do nothing
+  if (!historyState.value && isMatchBase()) {
     changeLocation(
       currentLocation.value,
       {
@@ -212,7 +213,11 @@ function useHistoryStateNavigation(base: string, token: number) {
       true
     )
   }
-
+  function isMatchBase() {
+    if (!base || base === '/') return true
+    const baseReg = new RegExp(`^${base}(/.*)?`)
+    return baseReg.test(location.pathname)
+  }
   function changeLocation(
     to: HistoryLocation,
     state: StateEntry,
